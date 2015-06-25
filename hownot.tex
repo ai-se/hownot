@@ -117,11 +117,15 @@ Defect prediction, configuration, prediction, planning, case-based reasoning.
 \section{Contrast Trees}
 Contrast trees are decision trees that can be used to learn decision rules from a large data set. The use of decision trees for this purpose makes it easy to visualize the data and also makes interpretation of the recommended policies fairly straight forward. In addition to this, contrast trees generate ranges of decisions that allow for better feasibility.
 \subsection{How does a contrast tree work?}
-Contrast trees works by building a simple decision tree based on entropy, as in the classification and regression trees. There are three key features that determine the shape of the trees. These include:
+Contrast trees works by building a simple decision tree based on entropy, as in the classification and regression trees. Contrast tree uses the WHERE clustering algorithm, which in-turn uses FASTMAP \cite{} to compute clusters 
+that contain instances that are spatially close.
+There are three key features that determine the shape of the tree. These include:
 \begin{itemize}
 \item \textit{Entropy} is used as criteria for generating optimum cuts while building the decision trees. These were shown to be consistent in giving high performance across most models.
 \item \textit{Minimum samples per leaf} defines the minimum number of instances in a leaf of the decision tree.
 \item \textit{Max depth} defines the number of levels of recursive splits that are allowed in the tree.
+
+
 \end{itemize}
 \subsection{Why would it work?}
 \subsection{Why did it not work?}
