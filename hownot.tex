@@ -1,0 +1,130 @@
+\documentclass[conference]{IEEEtran}
+%future work: local patch operator
+%complexity
+
+\usepackage{subfig}
+\usepackage{wrapfig}
+ \usepackage{amsmath}
+ \usepackage{url}
+ \usepackage{pifont}
+ %\usepackage{times}
+\usepackage{rotating}
+%\usepackage{balance} 
+\usepackage{color, colortbl}
+\usepackage{graphicx}
+\usepackage{algorithmicx}
+\usepackage[running]{lineno}
+\usepackage{program}
+\usepackage{cite}
+\usepackage{alltt}
+\usepackage{balance}
+\newcommand{\eq}[1]{Equation~\ref{eq:#1}}
+\newcommand{\bi}{\begin{itemize}}
+\newcommand{\ei}{\end{itemize}}
+\newcommand{\be}{\begin{enumerate}}
+\newcommand{\ee}{\end{enumerate}}
+\newcommand{\tion}[1]{\textsection\ref{sec:#1}}
+\newcommand{\fig}[1]{Figure~\ref{fig:#1}}
+\definecolor{lightgray}{gray}{0.975}
+\usepackage{fancyvrb}
+\usepackage{stfloats}
+\usepackage{multirow}
+\usepackage{listings}
+\usepackage{amsmath}  
+\DeclareMathOperator*{\argmin}{arg\,min} 
+\DeclareMathOperator*{\argmax}{arg\,max} 
+%\usepackage[usenames]{xcolor}
+
+
+
+
+\usepackage{color}
+\newcommand{\colorrule}[1]{\begingroup\color{#1}\hrule\endgroup}
+
+\definecolor{darkgreen}{rgb}{0,0.3,0}
+
+\usepackage[table]{xcolor}
+\definecolor{Gray}{rgb}{0.88,1,1}
+\definecolor{Gray}{gray}{0.85}
+\definecolor{Blue}{RGB}{0,29,193}
+\newcommand{\G}{\cellcolor{green}}
+\newcommand{\Y}{\cellcolor{yellow}}
+
+
+\definecolor{MyDarkBlue}{rgb}{0,0.08,0.45} 
+\newenvironment{changed}{\par\color{MyDarkBlue}}{\par}
+
+\newcommand{\ADD}[1]{\textcolor{MyDarkBlue}{{\bf #1}}}
+\newcommand{\addit}[1]{\begin{changed}\input{#1}\end{changed}}
+
+\usepackage{color}
+\usepackage{listings}
+\usepackage{setspace}
+
+\definecolor{Gray}{gray}{0.9}
+\newcommand{\kw}[1]{\textit{#1}}
+\newcommand{\quart}[4]{\begin{picture}(75,6)
+  {\color{black}\put(#3,3){\circle*{2.5}}\put(#1,3){\line(1,0){#2}}}\end{picture}}
+% New Commands
+
+\definecolor{Code}{rgb}{0,0,0}
+\definecolor{Decorators}{rgb}{0.5,0.5,0.5}
+\definecolor{Numbers}{rgb}{0.5,0,0}
+\definecolor{MatchingBrackets}{rgb}{0.25,0.5,0.5}
+\definecolor{Keywords}{rgb}{0,0,1}
+\definecolor{self}{rgb}{0,0,0}
+\definecolor{Strings}{rgb}{0,0.63,0}
+\definecolor{Comments}{rgb}{0,0.63,1}
+\definecolor{Comments}{rgb}{0.5,0.5,0.5}
+\definecolor{Backquotes}{rgb}{0,0,0}
+\definecolor{Classname}{rgb}{0,0,0}
+\definecolor{FunctionName}{rgb}{0,0,0}
+\definecolor{Operators}{rgb}{0,0,0}
+\definecolor{Background}{rgb}{1,1,1}
+\title{HOW NOT}
+
+% You can go ahead and credit any number of authors here,
+% e.g. one 'row of three' or two rows (consisting of one row of three
+% and a second row of one, two or three).
+%
+% The command \alignauthor (no curly braces needed) should
+% precede each author name, affiliation/snail-mail address and
+% e-mail address. Additionally, tag each Slope of
+% affiliation/address with \affaddr, and tag the
+% e-mail address with \email.
+%
+% 1st. author
+\author{Rahul Krishna, Tim Menzies\\
+        Computer Science, North Carolina State University, USA\\
+       \{i.m.ralk, tim.menzies\}\@gmail.com
+       
+       % use '\and' if you need 'another row' of author names
+% 4th. author
+}
+
+
+  \pagestyle{plain}
+\begin{document}
+  \maketitle
+    \begin{abstract}
+ 
+  \end{abstract}
+  \begin{IEEEkeywords}
+Defect prediction, configuration, prediction, planning, case-based reasoning.
+  \end{IEEEkeywords}
+
+\section{Introduction} 
+\section{Contrast Trees}
+Contrast trees are decision trees that can be used to learn decision rules from a large data set. The use of decision trees for this purpose makes it easy to visualize the data and also makes interpretation of the recommended policies fairly straight forward. In addition to this, contrast trees generate ranges of decisions that allow for better feasibility.
+\subsection{How does a contrast tree work?}
+Contrast trees works by building a simple decision tree based on entropy, as in the classification and regression trees. There are three key features that determine the shape of the trees. These include:
+\begin{itemize}
+\item \textit{Entropy} is used as criteria for generating optimum cuts while building the decision trees. These were shown to be consistent in giving high performance across most models.
+\item \textit{Minimum samples per leaf} defines the minimum number of instances in a leaf of the decision tree.
+\item \textit{Max depth} defines the number of levels of recursive splits that are allowed in the tree.
+\end{itemize}
+\subsection{Why would it work?}
+\subsection{Why did it not work?}
+\subsection{What worked?}
+\section{Future Work}
+\end{document}
