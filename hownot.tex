@@ -118,15 +118,15 @@ Defect prediction, configuration, prediction, planning, case-based reasoning.
 Contrast trees are decision trees that can be used to learn decision rules from a large data set. The use of decision trees for this purpose makes it easy to visualize the data and also makes interpretation of the recommended policies fairly straight forward. In addition to this, contrast trees generate ranges of decisions that allow for better feasibility.
 \subsection{How does a contrast tree work?}
 Contrast trees works by building a simple decision tree based on entropy, as in the classification and regression trees. Contrast tree uses the WHERE clustering algorithm, which in-turn uses FASTMAP \cite{} to compute clusters 
-that contain instances that are spatially close. Each cluster is assigned a unique cluster id. Then, a simple decision tree is built using a standard classification and regression tree (CART). The tree is built with the following tuneable features:
+that contain instances that are spatially close. Each cluster is assigned a unique cluster id. Then, a simple decision tree is built using a standard classification and regression tree (CART). The tree is built with the following tunable features:
 \begin{itemize}
 \item \textit{Entropy} is used as criteria for generating optimum cuts while building the decision trees. These were shown to be consistent in giving high performance across most data.
 \item \textit{Minimum samples per leaf} defines the minimum number of instances in a leaf of the decision tree.
 \item \textit{Max depth} defines the number of levels of recursive splits that are allowed in the tree.
 \end{itemize}
-Decision trees can be used to generate decision rule, which when applied to solution sets must theoritically improve performance. For every instance in a ``worst'' set W, we find the nearest branch with better performance, ``B'', that ``W''. All the changes that need to be made inorder to achive ``B'' constitute the contrast set, ``C''. Note that the brach variables use decision ranges instead of single point solutions, making implementaion of the rules in real life feasible. 
+Decision trees can be used to generate decision rule, which when applied to solution sets must theoretically improve performance. For every instance in a ``worst'' set W, we find the nearest branch with better performance, ``B'', that ``W''. All the changes that need to be made in order to achieve ``B'' constitute the contrast set, ``C''. Note that the branch variables use decision ranges instead of single point solutions, making implementation of the rules in real life feasible. 
 \subsection{Why would it work?}
-In theory, contrast set is an ideal tool for genrating decision rules. Some of the key advantages are listed below:
+In theory, contrast set is an ideal tool for generating decision rules. Some of the key advantages are listed below:
 \begin{itemize}
 \item Firstly, they allow the user to exert a fine grain control over the parameters that needs to be changed, while providing a way to visualize the recommended changes.
 \item The changes suggested by the contrast sets are inherently local in nature, making the changes practical and potentially easy to implement.
@@ -134,7 +134,7 @@ In theory, contrast set is an ideal tool for genrating decision rules. Some of t
 \end{itemize}
 \subsection{Why did it not work?}
 \subsection{What worked?}
-Contrast tree is the second generation of our efforts to use contrast set learners for planning case based reasoning. W2 represents the first generation of our work. W2 is a CBR planner that reflected over the delta of raw attributes \cite{}. However, it frequently suffered from an optimization failure. When its plans were applied, performace improved in only  $\tfrac{1}{3}$rd of test cases. 
+Contrast tree is the second generation of our efforts to use contrast set learners for planning case based reasoning. W2 represents the first generation of our work. W2 is a CBR planner that reflected over the delta of raw attributes \cite{}. However, it frequently suffered from an optimization failure. When its plans were applied, performance improved in only  $\tfrac{1}{3}$rd of test cases. 
 
 Generation two of that work resulted in IDEA. 
 and HOW use the same recursive clustering method but IDEA made the mistake of summarizing those recursive divisions into a tree structure. Initial results with IDEA were weak, but somewhat positive [35]. We tried unsuccessfully for months to extend and improve the IDEA prototype. The results were most discouraging: those tree-based summaries often suffered from the same optimization failure problem seen with W2. As part of the IDEA work, we built HOW as a “straw-
