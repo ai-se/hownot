@@ -118,16 +118,19 @@ Defect prediction, configuration, prediction, planning, case-based reasoning.
 Contrast trees are decision trees that can be used to learn decision rules from a large data set. The use of decision trees for this purpose makes it easy to visualize the data and also makes interpretation of the recommended policies fairly straight forward. In addition to this, contrast trees generate ranges of decisions that allow for better feasibility.
 \subsection{How does a contrast tree work?}
 Contrast trees works by building a simple decision tree based on entropy, as in the classification and regression trees. Contrast tree uses the WHERE clustering algorithm, which in-turn uses FASTMAP \cite{} to compute clusters 
-that contain instances that are spatially close.
-There are three key features that determine the shape of the tree. These include:
+that contain instances that are spatially close. Each cluster is assigned a unique cluster id. Then, a simple decision tree is built using a standard classification and regression tree (CART). The tree is built with the following tuneable features:
 \begin{itemize}
-\item \textit{Entropy} is used as criteria for generating optimum cuts while building the decision trees. These were shown to be consistent in giving high performance across most models.
+\item \textit{Entropy} is used as criteria for generating optimum cuts while building the decision trees. These were shown to be consistent in giving high performance across most data.
 \item \textit{Minimum samples per leaf} defines the minimum number of instances in a leaf of the decision tree.
 \item \textit{Max depth} defines the number of levels of recursive splits that are allowed in the tree.
-
-
 \end{itemize}
+Decision trees can be used to generate decision rule, which when applied to solution sets must theoritically improve performance. For every instance in a ``worst'' set W, we find the nearest branch with better performance, ``B'', that ``W''. All the changes that need to be made inorder to achive ``B'' constitute the contrast set, ``C''. Note that the brach variables use decision ranges instead of single point solutions, making implementaion of the rules in real life feasible. 
 \subsection{Why would it work?}
+In theory, contrast set is an ideal tool for genrating decision rules. Some of the key advantages are listed below:
+\begin{itemize}
+\item Firstly, they allow the user to exert a fine grain control over the parameters that needs to be changed, while providing a way to visualize the recommended changes.
+\end{itemize}
+
 \subsection{Why did it not work?}
 \subsection{What worked?}
 \section{Future Work}
