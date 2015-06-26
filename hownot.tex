@@ -129,9 +129,15 @@ Decision trees can be used to generate decision rule, which when applied to solu
 In theory, contrast set is an ideal tool for genrating decision rules. Some of the key advantages are listed below:
 \begin{itemize}
 \item Firstly, they allow the user to exert a fine grain control over the parameters that needs to be changed, while providing a way to visualize the recommended changes.
+\item The changes suggested by the contrast sets are inherently local in nature, making the changes practical and potentially easy to implement.
+\item The contrast tress require a worst case time complexity of $O(n)$, which is a function in linear time.
 \end{itemize}
-
 \subsection{Why did it not work?}
 \subsection{What worked?}
+Contrast tree is the second generation of our efforts to use contrast set learners for planning case based reasoning. W2 represents the first generation of our work. W2 is a CBR planner that reflected over the delta of raw attributes \cite{}. However, it frequently suffered from an optimization failure. When its plans were applied, performace improved in only  $\tfrac{1}{3}$rd of test cases. 
+
+Generation two of that work resulted in IDEA. 
+and HOW use the same recursive clustering method but IDEA made the mistake of summarizing those recursive divisions into a tree structure. Initial results with IDEA were weak, but somewhat positive [35]. We tried unsuccessfully for months to extend and improve the IDEA prototype. The results were most discouraging: those tree-based summaries often suffered from the same optimization failure problem seen with W2. As part of the IDEA work, we built HOW as a “straw-
+man” ; i.e. a simpler approach that was to provide a baseline result, above which IDEA was meant to do better. However, HOW’s results were so good that we threw away months of work on tree-based planning with IDEA. Now, we strongly recommend HOW over IDEA (and W2) since, as shown by the following results, HOW’s plans never lead to performance getting worse. Also, when HOW did improve the expected values of the performance, those performance improvements were an order of magnitude larger than those seen with IDEA. 
 \section{Future Work}
 \end{document}
