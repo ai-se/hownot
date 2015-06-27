@@ -127,6 +127,71 @@ that contain instances that are spatially close. Each cluster is assigned a uniq
 Decision trees can be used to generate a decision rule, which when applied to solution sets must theoretically improve performance. To generate rules -- a tree is constructed with some training data, and for every instance in a the test data, we find a branch in the tree that best matches the test data. All instances that needs improvement in the test data constitute the ``worst'' set W. We find the nearest branch, ``B'', in the tree with better performance. The difference between W and B constitutes the decision rules.
 
 A contrast set, ``C'' is simply a collection of all the decision rules. It can be obtained traversing through the tree from ``W'' to ``B'' and tracking all the branch variables along this path. Note that the branch variables use decision ranges instead of single point solutions, making implementation of the rules in real life feasible. 
+\begin{figure}[t]
+    \small
+    ~\hrule~
+    
+    {\bf \fig{where}a: top down clustering:}
+    
+    Data can be rapidly and recursively divided   as follows.
+    Find   two   distance cases,  $X,Y$
+    by picking any case $W$ at random, then setting $X$ to its most
+    distant case, then setting $Y$ to the case most distant from
+    $X$~\cite{fastmap}
+    (this requires only $O(2N)$ comparisons
+    of $N$ cases).
+    Next, HOW projects each case $Z$
+    onto a {\tt Slope} that  runs between $X,Y$ using the cosine
+    rule of \fig{where}b. After that,  split the data at the median $x$ value of all cases and
+    recurses on each half  (stopping when
+    one half has less  than $\sqrt{N}$ of the original population). For more details. \fig{howcode}, line~84, 
+    
+    ~\hrule~
+    
+    {\bf \fig{where}b: finding distances:}
+    
+    In the \fig{where}a, to compute distances, we use
+    the Euclidean measure recommended for
+    case-based reasoning by Aha et al.~\cite{aha91};
+    i.e. $\sqrt{\sum_iw_i(X_i-Y_i)^2}$ where $X_i,Y_i$
+    where values are  normalized 0..1 for the range min..max and 
+    $w_i$ is some importance weight given to attribute $i$.
+    Usually, $w_i=1$ but it can be adjusted using, say,
+    the feature weighting methods of \fig{where}d. 
+    
+    ~\hrule~
+    
+    {\bf \fig{where}c: 3 point geometry:}
+    
+    Let   $X,Y$ be two points joined by  a {\em Slope} of  length $c$.
+    A third point, $Z$, has distances  $a=dist(Z,X)$ and
+    $b=dist(Z,Y)$ to $X,Y$, respectively.
+    According to the cosine rule,   $Z$ projects onto  $\overline{XY}$
+    at distance $x=(a^2 + c^2 - b^2)/(2c)$ from $X$.
+    Further, according to Pythagoras' theorem, $Z$ stands at a distance
+    $y = \sqrt{a^2 - x^2}$ from the line $\overline{XY}$. For more details, see  \fig{howcode}, line~52.
+    
+    ~\hrule~
+    
+    {\bf \fig{where}d: feature weighting:}
+    
+    HERE's feature weighting algorithm
+    comes from the CART regression tree learner~\cite{Breiman1984}.
+    It sorts independent variables
+    according to how well they can reduce the variability
+    of a  numeric objective.
+    If we split some column $i$ of independent numeric data  into $N=n_1 + n_2 + ..$ splits,
+    then the expected
+    value of the objective value of the split  is $w_i = \sum_i v_in_i/N$
+    where $v$ is the standard deviation of the objective.
+    A recursive procedure can  find those divisions $n_1,n_2,...$ by (a)~sorting a numeric column,
+    then split at $\argmin_i w_i$, then recursing into each half.  For more details, see  \fig{howcode}, line~113.
+    
+    ~\hrule~
+    
+    \caption{Sub-routines within HOW.}\label{fig:where}
+\end{figure}
+
 \subsection{Why would it work?}
 In theory, contrast set is an ideal tool for generating decision rules. Some of the key advantages are listed below:
 \begin{itemize}
