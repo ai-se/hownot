@@ -81,7 +81,7 @@
 \definecolor{FunctionName}{rgb}{0,0,0}
 \definecolor{Operators}{rgb}{0,0,0}
 \definecolor{Background}{rgb}{1,1,1}
-\title{HOW NOT}
+\title{Actionable = Cluster + Constrast?}
 
 % You can go ahead and credit any number of authors here,
 % e.g. one 'row of three' or two rows (consisting of one row of three
@@ -107,13 +107,79 @@
 \begin{document}
   \maketitle
     \begin{abstract}
- 
+ There are many
+    algorithms for data {\em classification} such as  C4.5, Naive Bayes, SVM, etc. While these algorithms are widely developed and well-known, another kind
+    of reasoning has far less support.
+
+This paper is about that other kind of reasoning. Here, we seek not
+    to recognize ``what is'', but instead to offer advice on ``what to change''.
+Two approaches for learning minimal, yet effective changes, to software
+artifacts are explored. Lessons learned are reported.
   \end{abstract}
   \begin{IEEEkeywords}
-Defect prediction, configuration, prediction, planning, case-based reasoning.
+Prediction, case-based reasoning, data mining, software engineering.
   \end{IEEEkeywords}
 
 \section{Introduction} 
+How should we handle ``unpopulular'' results
+    for data analytics? For example, if a business manager is presented
+    with a data mining result that troubles them (e.g. an estimate of
+    development time that is distressingly long), what advice
+    can we offer them on management actions to {\em change} hat estimate?
+
+This is an important question, and one with much currency in industry.
+In the summer of 2011 and 2012, one of us (Menzies) spent two months
+working on-site at Microsoft Redmond,
+observing data mining analysts.  He
+noted how Microsoft's data scientists
+discussed their data with  business users. In summary, much
+of that discussion was {\em not} supported by standard data miners.
+
+One surprising observation made at Microsoft  was that
+there was a surprising little
+inspection of the output of data miners as compared to another process, which we call {\em peeking}.
+In {\em peeking}, analysts and users spend much time
+inspecting and discuss small samples of either raw or exemplary or synthesized project data.  Further, very little of those discussions were  focused on classification
+(the additional of a labels to some unlabelled data). Rather, much time
+was spent in those meetings discussion {\em what to do do}; i.e. trying
+to determine what could be altered to better improve some business outcome.
+
+That observational study of current practices
+at Microsoft found two common ``peeking'' methods.
+In {\em data engagement meetings},
+users debated the implications of data
+displayed on a screen. In this way, users
+engaged with the data and with each other by
+monitoring each others' queries and check each others'
+conclusions.
+
+Another data analysis pattern observed
+at Microsoft was  {\em cluster + contrast} in which
+data is  reduced to a few
+  clusters. Users are then just shown the delta between those
+  clusters. While contrasting, if feature values are
+  the same in both clusters, then these were pruned from
+  the reports to the user. In this way, very large
+data sets can be shown on one PowerPoint
+slide. Note that {\em cluster+contrast} was a tool that can be usefully employed within
+{\em data engagement meetings}.
+
+
+Cluster+contrast and engagement
+meetings are common practices at Microsoft. Yet they were
+are supported by a complex and kludged combination of several
+tools. Also, those methods had never been rigorously studied or certified.
+For both those reasons,
+ we reflected over those tools to discover and analyze their
+underlying process. The result was HOW: a tool
+that combines two
+data reduction methods:\bi
+\item Method1: feature selection
+\item Method2: centroid generation from   clusters.
+\ei
+While Method1 is widely used~\cite{Menzies2010},
+to the best of our knowledge, this combination has not been thoroughly explored before.
+Hence, this paper discusses alternative method for ``peeking''.
 \section{Contrast Trees}
 Contrast trees are decision trees that can be used to learn decision rules from a large data set. The use of decision trees for this purpose makes it easy to visualize the data and also makes interpretation of the recommended policies fairly straight forward. In addition to this, contrast tree generate ranges of decisions that allow for better feasibility.
 \subsection{How does a contrast tree work?}
