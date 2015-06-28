@@ -81,7 +81,7 @@
 \definecolor{FunctionName}{rgb}{0,0,0}
 \definecolor{Operators}{rgb}{0,0,0}
 \definecolor{Background}{rgb}{1,1,1}
-\title{HOW NOT}
+\title{"Peeking" for Actionable Analytics}
 
 % You can go ahead and credit any number of authors here,
 % e.g. one 'row of three' or two rows (consisting of one row of three
@@ -107,27 +107,98 @@
 \begin{document}
   \maketitle
     \begin{abstract}
- 
+There are many
+    algorithms for data {\em classification} such as  C4.5, Naive Bayes, SVM, etc. While these algorithms are widely developed and well-known, another kind
+    of reasoning has far less support.
+    
+This paper is about that other kind of reasoning. Here, we seek not
+    to recognize ``what is'', but instead to offer advice on ``what to change''.
+Two approaches for learning minimal, yet effective changes, to software
+artifacts are explored. Lessons learned are reported.
   \end{abstract}
   \begin{IEEEkeywords}
-Defect prediction, configuration, prediction, planning, case-based reasoning.
+Prediction, case-based reasoning, data mining, software engineering.
   \end{IEEEkeywords}
 
 \section{Introduction} 
+How should we handle ``unpopulular'' results
+    for data analytics? For example, if a business manager is presented
+    with a data mining result that troubles them (e.g. an estimate of
+    development time that is distressingly long), what advice
+    can we offer them on management actions to {\em change} hat estimate?
+    
+This is an important question, and one with much currency in industry. 
+In the summer of 2011 and 2012, one of us (Menzies) spent two months
+working on-site at Microsoft Redmond, 
+observing data mining analysts.  He
+noted how Microsoft's data scientists
+discussed their data with  business users. In summary, much
+of that discussion was {\em not} supported by standard data miners.
+
+One surprising observation made at Microsoft  was that
+there was a surprising little
+inspection of the output of data miners as compared to another process, which we call {\em peeking}.
+In {\em peeking}, analysts and users spend much time 
+inspecting and discuss small samples of either raw or exemplary or synthesized project data.  Further, very little of those discussions were  focused on classification
+(the additional of a labels to some unlabelled data). Rather, much time
+was spent in those meetings discussion {\em what to do do}; i.e. trying
+to determine what could be altered to better improve some business outcome.
+
+That observational study of current practices
+at Microsoft found two common ``peeking'' methods.
+In {\em data engagement meetings},
+users debated the implications of data 
+displayed on a screen. In this way, users
+engaged with the data and with each other by
+monitoring each others' queries and check each others'
+conclusions.  
+
+Another data analysis pattern observed
+at Microsoft was  {\em cluster + contrast} in which
+data is  reduced to a few
+  clusters. Users are then just shown the delta between those
+  clusters. While contrasting, if feature values are
+  the same in both clusters, then these were pruned from
+  the reports to the user. In this way, very large
+data sets can be shown on one PowerPoint 
+slide. Note that {\em cluster+contrast} was a tool that can be usefully employed within
+{\em data engagement meetings}.
+
+
+Cluster+contrast and engagement
+meetings are common practices at Microsoft. Yet they were
+are supported by a complex and kludged combination of several
+tools. Also, those methods had never been rigorously studied or certified.
+For both those reasons,
+ we reflected over those tools to discover and analyze their
+underlying process. The result was HOW: a tool
+that combines two 
+data reduction methods:\bi
+\item Method1: feature selection
+\item Method2: centroid generation from   clusters.
+\ei
+While Method1 is widely used~\cite{menziesLearnToPredict},
+to the best of our knowledge, this combination has not been thoroughly explored before.
+Hence, this paper discusses alternative method for ``peeking''.
+
+
 \section{Contrast Trees}
 Contrast trees are decision trees that can be used to learn decision rules from a large data set. The use of decision trees for this purpose makes it easy to visualize the data and also makes interpretation of the recommended policies fairly straight forward. In addition to this, contrast tree generate ranges of decisions that allow for better feasibility.
 \subsection{How does a contrast tree work?}
 Contrast trees works by building a simple decision tree based on entropy, as in the classification and regression trees. Contrast tree uses the WHERE clustering algorithm, which in-turn uses FASTMAP \cite{} to compute clusters 
-that contain instances that are spatially close. Each cluster is assigned a unique cluster id. Then, a simple decision tree is built using a standard classification and regression tree (CART). The tree is built with the following tunable features:
+that contain instances that are spatially close. Each cluster is assigned a unique cluster id. Then, a simple decision tree is built using a standard classification and regression tree (CART). 
+
+The leaves of the tree contain several instances usually from more than one cluster. The leaves are scored using the mean of the majority cluster. The construction of the tree is subject to the following tunable features:
 \begin{itemize}
 \item \textit{Entropy} is used as criteria for generating optimum cuts while building the decision trees. These were shown to be consistent in giving high performance across most data.
 \item \textit{Minimum samples per leaf} defines the minimum number of instances in a leaf of the decision tree.
 \item \textit{Max depth} defines the number of levels of recursive splits that are allowed in the tree.
 \end{itemize}
+
 Decision trees can be used to generate a decision rule, which when applied to solution sets must theoretically improve performance. To generate rules -- a tree is constructed with some training data, and for every instance in a the test data, we find a branch in the tree that best matches the test data. All instances that needs improvement in the test data constitute the ``worst'' set W. We find the nearest branch, ``B'', in the tree with better performance. The difference between W and B constitutes the decision rules.
 
 A contrast set, ``C'' is simply a collection of all the decision rules. It can be obtained traversing through the tree from ``W'' to ``B'' and tracking all the branch variables along this path. Note that the branch variables use decision ranges instead of single point solutions, making implementation of the rules in real life feasible. 
-\subsection{Why would it work?}
+
 In theory, contrast set is an ideal tool for generating decision rules. Some of the key advantages are listed below:
 \begin{itemize}
 \item They allow the user to exert a fine grain control over the parameters that needs to be changed, while providing a way to visualize the recommended changes.
@@ -148,6 +219,5 @@ Generation two of our work resulted in the development of contrast trees. It use
 
 As a continuation of the contrast tree work, we built HOW as a simpler approach that was to provide a baseline result, above which contrast tree was meant to do better. However, HOW’s results were so good that we threw away months of work on tree-based planning with contrast tree. 
 \section{Future Work}
-Now, we strongly recommend HOW over contrast tree (and W2) since, as shown by the following results, HOW’s plans never lead to performance getting worse. Also, when HOW did improve the expected values of the performance, those performance improvements were an order of magnitude larger than those seen with contrast tree. 
 
 \end{document}
