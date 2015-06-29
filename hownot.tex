@@ -162,9 +162,7 @@ slide. Note that {\em cluster+contrast} was a tool that can be usefully employed
 
 
 Cluster+contrast and engagement
-meetings are common practices at Microsoft. Yet they were
-are supported by a complex and kludged combination of several
-tools. Also, those methods had never been rigorously studied or certified.
+meetings are common practices at Microsoft. Yet  these methods had never been rigorously studied or certified.
 For both those reasons,
  we reflected over those tools to discover and analyze their
 underlying process. The result was HOW: a tool
@@ -178,14 +176,14 @@ to the best of our knowledge, this combination has not been thoroughly explored 
 Hence, this paper explores ``peeking''.
 
 \section{How to Cluster}
-Recent results suggest that we are free to select from a wide range of 
-clustering methods.  Ganesan~\cite{div14} explored the value of
-different clustering methods for SE data using the  effort and defect data from
+Recent results suggest  we are free to select from a wide range of 
+clustering methods.  Ganesan~\cite{div14} explored 
+different clustering methods for SE data using   effort and defect data from
 the PROMISE repository\footnote{http://openscience.us/repo};
 That studied explored
 K-Means, mini-batch-K-Means, DBscan, EM, Ward, and the WHERE algorithm discussed
 below.
-Clusters were assessed via the performance of prediction algorithms
+Clusters were assessed via the performance of prediction 
 learned from the clusters by Random Forests (for defect prediction)
 and M5prime or linear regression (for effect estimation).  Ganesan found
  that the details of the clustering method were less important than ensuring that  a large number of clusters were generated.
@@ -261,7 +259,13 @@ we use  the top-down
 \end{figure}
 
 \section{How to Contrast}
-Contrast trees are decision trees that can be used to learn decision rules from a large data set. The use of decision trees for this purpose makes it easy to visualize the data and also makes interpretation of the recommended policies fairly straight forward. In addition to this, contrast tree generate ranges of decisions that allow for better feasibility.
+Once we have  clusters, the next task is to offer business users lessons learned from comparing different clusters.
+
+Once methods for doing so is a {\em contrast tree}.
+First, we cluster the data to find clusters $C_1,C_2,...$.
+Next, using those clusters as class labels, we execute a decision tree algorithm to find what attributes select for different clusters. Next, to learn recommendations for a business user, we ask (1) what {\em current} cluster are you in?; (2) what {\em desired} cluster do you want to move to?; (3) what is the delta between those clusters? To answer the last question, we report the delta in the branches of the decision tree that lead to {\em current} and {\em desired}. 
+
+%Contrast trees are decision trees that can be used to learn decision rules from a large data set. The use of decision trees for this purpose makes it easy to visualize the data and also makes interpretation of the recommended policies fairly straight forward. In addition to this, contrast tree generate ranges of decisions that allow for better feasibility.
 \subsection{How does a contrast tree work?}
 Contrast trees works by building a simple decision tree based on entropy, as in the classification and regression trees. Contrast tree uses the WHERE clustering algorithm, which in-turn uses FASTMAP \cite{} to compute clusters 
 that contain instances that are spatially close. Each cluster is assigned a unique cluster id. Then, a simple decision tree is built using a standard classification and regression tree (CART). The tree is built with the following tunable features:
