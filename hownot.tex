@@ -105,7 +105,6 @@
 
 \pagestyle{plain}
 \begin{document}
-<<<<<<< HEAD
 	\maketitle
 	\begin{abstract}
 		There are many
@@ -206,13 +205,13 @@
 			\item Find   two   distance cases,  $X,Y$
 			by picking any case $W$ at random, then setting $X$ to its most
 			distant case, then setting $Y$ to the case most distant from
-			$X$~\cite{fastmap}
+			$X$
 			(this requires only $O(2N)$ comparisons
 			of $N$ cases).
 			\item Project each case $Z$
 			onto a {\tt Slope} that  runs between $X,Y$ using the cosine
 			rule. 
-			\item Split the data at the median $x$ value of all cases and
+			\item Split the data at the median $X$ value of all cases and
 			recurses on each half  (stopping when
 			one half has less  than $\sqrt{N}$ of the original population).
 		\end{itemize}
@@ -243,36 +242,32 @@
 	Next, using those clusters as class labels, we execute a decision tree algorithm to find what attributes select for different clusters. Next, to learn recommendations for a business user, we ask (1) what {\em current} cluster are you in?; (2) what {\em desired} cluster do you want to move to?; (3) what is the delta between those clusters? To answer the last question, we report the delta in the branches of the decision tree that lead to {\em current} and {\em desired}. 
 	
 	%Contrast trees are decision trees that can be used to learn decision rules from a large data set. The use of decision trees for this purpose makes it easy to visualize the data and also makes interpretation of the recommended policies fairly straight forward. In addition to this, contrast tree generate ranges of decisions that allow for better feasibility.
-	\subsection{How does a contrast tree work?}
-	Contrast trees works by building a simple decision tree based on entropy, as in the classification and regression trees. Contrast tree uses the WHERE clustering algorithm, which in-turn uses FASTMAP \cite{} to compute clusters 
+	\subsection{Building Contrast Trees}
+	Contrast trees works by building a simple decision tree based on entropy, as in the classification and regression trees. Contrast tree uses the WHERE clustering algorithm, which in-turn uses FASTMAP \cite{fastmap} to compute clusters 
 	that contain instances that are spatially close. Each cluster is assigned a unique cluster id. Then, a simple decision tree is built using a standard classification and regression tree (CART). The tree is built with the following tunable features:
 	\begin{itemize}
 		\item \textit{Entropy} is used as criteria for generating optimum cuts while building the decision trees. These were shown to be consistent in giving high performance across most data.
 		\item \textit{Minimum samples per leaf} defines the minimum number of instances in a leaf of the decision tree.
 		\item \textit{Max depth} defines the number of levels of recursive splits that are allowed in the tree.
 	\end{itemize}
+	
 	Decision trees can be used to generate a decision rule, which when applied to solution sets must theoretically improve performance. To generate rules -- a tree is constructed with some training data, and for every instance in a the test data, we find a branch in the tree that best matches the test data. All instances that needs improvement in the test data constitute the ``worst'' set W. We find the nearest branch, ``B'', in the tree with better performance. The difference between W and B constitutes the decision rules.
 	
 	A contrast set, ``C'' is simply a collection of all the decision rules. It can be obtained traversing through the tree from ``W'' to ``B'' and tracking all the branch variables along this path. Note that the branch variables use decision ranges instead of single point solutions, making implementation of the rules in real life feasible. 
-	
-	\subsection{Why would it work?}
-	Contrast set seemed like it would be a fine tool for generating decision rules. They present some key advantages which are listed below:l
-	\begin{itemize}
-		\item They allow the user to exert a fine grain control over the parameters that needs to be changed, while providing a way to visualize the recommended changes.
-		\item The changes suggested by the contrast sets are inherently local in nature, making the changes practical and potentially easy to implement.
-		\item The contrast tress require a worst case time complexity of $O(n)$, which is a function in linear time.
-	\end{itemize}
 
 	\begin{figure}[t]
 		{\footnotesize  \begin{tabular}{{llrrc}}
 				\arrayrulecolor[gray]{.90}
 				\rowcolor[gray]{.95} \textbf{Rank} & \textbf{Treatment} & \textbf{Median} & \textbf{IQR} & \\
 				1 &     Ant (Tree) &    0.67  &  0.41 & \quart{0}{39}{37}{69} \\
-				1 &   Jedit (Tree) &    0.68  &  0.13 & \quart{36}{13}{38}{69} \\
-				1 &     Ant (WHAT) &    0.7  &  0.13 & \quart{33}{13}{40}{69} \\
-				1 &   Jedit(WHAT) &    0.72  &  0.25 & \quart{25}{24}{42}{69} \\
+				1 &     Ant (HOW) &    0.7  &  0.13 & \quart{33}{13}{40}{69} \\
+				1 &   Jedit(HOW) &    0.72  &  0.25 & \quart{25}{24}{42}{69} \\
+				1 &   Jedit (Tree) &    0.75  &  0.13 & \quart{37}{12}{43}{66} \\
 				\hline \end{tabular}}
-	\caption{Results comparing the performance scores on sample projects from the Jurezcko data sets.}
+		
+		\caption{Results comparing the performance scores on sample projects from the Jurezcko data sets.}
+		\label{res}
+
 	\end{figure}
 	
 	
@@ -281,26 +276,54 @@
 			\subfloat[Tree Learner]{
 				\includegraphics[width=\linewidth]{ant1.png}
 				\includegraphics[width=\linewidth]{jedit1.png}}\\
-			\subfloat[WHAT]{			
+			\subfloat[HOW]{			
 				\includegraphics[width=\linewidth]{ant2.png}
 				\includegraphics[width=\linewidth]{jedit2.png}}
 		\end{minipage}
 		\caption{Performance Comparision}
+		\label{deltas}
 	\end{figure*}
 	
-	\subsection{Reasons for failure}
-	Although the idea seemed ideal, initial implementation of the contrast tree provided results that were discouraging. One of the major problems with using contrast trees was that the trees were rather large. The initial motivation was that the trees could serve as a medium for experts to identify and explore solution spaced that were local to the problem. The size of the decision tree jeopardized the readability of the solutions by increasing the complexity. In our efforts to reduce the size of the tree, we devised a pruning method, that prunes away irrelevant branches that do not contribute better solutions. The smaller trees, while being easier to understand, posed another problem: the test instances were too dissimilar to the leaves in the tree. This meant that the relevance of the contrast set could not be justified.
+	\subsection{Features of Contrast Trees}
+As with any tree structure, the size and depth of the Contrast tree has a profound impact on it performance. Our initial motivation was that the trees could serve as a medium for experts to identify and explore solution spaces that were local to the problem. The size of the decision tree, if too large, jeopardizes the readability of the solutions by increasing the complexity. We have therefore made efforts to reduce the size of the tree, to do this we devised a pruning method, that prunes away irrelevant branches that do not contribute better solutions. The smaller trees are much easier to understand, however they do pose another problem: the test instances can be too dissimilar to the leaves in the tree and this means that the relevance of the contrast set can not be fully justified.
 	
-	The depth of the tree also influences the performance of contrast sets. The depth is represented by levels of splits in the tree, and this parameter determines the number of features that require changes. If the tree is too shallow, the changes suggested by the planner are too little to make any difference. On the other hand, deeper trees leads to over-fitting and therefore suggests too many changes when not required.
+Likewise, the depth of the tree also influences the quality of contrast sets. The depth is represented by levels of splits in the tree, and this parameter determines the number of features that require changes. If the tree is too shallow, the changes suggested by the planner are too little to make any difference. On the other hand, deeper trees leads to over-fitting and therefore suggests too many changes when not required. Therefore, it is advised that these parameters be tuned
+
+	\subsection{Development of Contrast Trees}
+	Contrast tree represents the second generation of our efforts to use contrast set learners for planning and case based reasoning. W2 represents the first generation of our work. W2 is a CBR planner that reflected over the delta of raw attributes \cite{6600685}. However, it frequently suffered from an optimization failure. When its plans were applied, performance improved in only $\tfrac{1}{3}$rd of test cases. 
 	
-	A study was conducted on numerous examples of the Jureczko object-oriented static code data sets \cite{}: Ant, Camel, Ivy, Jedit, Log4j, Lucene, Poi, Synapse, Velocity, Xalan, Xerces \footnote{Available from the object-oriented defects section of the PROMISE respository openscience.us/repo/defect/ck.}. On these data sets, the plans generated by contrast tree advise
-	how to change static code attributes in order to reduce defects in Java classes. The challenges with contrast trees had a profound impact on the performance, as shown in figure \ref{}.
-	\subsection{What worked?}
-	Contrast tree is the second generation of our efforts to use contrast set learners for planning case based reasoning. W2 represents the first generation of our work. W2 is a CBR planner that reflected over the delta of raw attributes \cite{}. However, it frequently suffered from an optimization failure. When its plans were applied, performance improved in only  $\tfrac{1}{3}$rd of test cases. 
+	Generation two of our work resulted in the development of contrast trees. As briefly discussed above, it uses a recursive clustering algorithm followed by summarizing these recursive divisions into a tree structure. The initial results with contrast tree was very encouraging. As a continuation of our contrast tree work, we built HOW~\cite{HOW} as a simpler approach that was to provide a baseline result, above which contrast tree was meant to do better. 
 	
-	Generation two of our work resulted in the development of contrast trees. It uses a recursive clustering method discussed above followed by summarizing these recursive divisions into a tree structure. Although the initial results with contrast tree were weak, they were somewhat positive. We tried to extend and improve the contrast tree prototype, however the results were not encouraging. The tree-based approach suffered from one key issue: the local changes were highly ineffective in reducing the defects, see figure \ref{}. In addition, it also faced the optimization failure problem, which was also seen with W2. 
+	HOW is very different to other CBR systems in that it explores the {\em gradient between pairs of nearest clusters}. In other words, the classic CBR methods, including Contrast Trees, explore {\em points} while
+HOW explores the slope {\em between} points. Experimentation with HOW provided results that were in fact comparable to Contrast Trees. 
 	
-	As a continuation of the contrast tree work, we built HOW as a simpler approach that was to provide a baseline result, above which contrast tree was meant to do better. However, HOW’s results were so good that we threw away months of work on tree-based planning with contrast tree. 
+	\section{Experiments}
+	\subsection{Data}
+	For our initial experimentation, we studied two sample projects from the Jureczko object-oriented static code data sets~\cite{jureczko10}: Ant, Camel, Ivy, Jedit,   Log4, Lucene, Poi, Synapse, Velocity, Xalan, Xerces \footnote{Available from the object-oriented defects section of the PROMISE respository openscience.us/repo/defect/ck.}. The data is a collection of 20 OO measures and a the Boolean dependent attribute (whether a defect is reported to a post-release bug-tracking system). For our study, we picked two projects, Ant and Jedit, that best exemplified the performance of Contrast Tree. 
+	\subsection{Assessment}
+	In this study we wish to demonstrate Contrast Trees' ability to suggest meaningful changes in order to reduce defects while obtaining baseline results using a simpler algorithm. All our results have been presented as ratios of the number of defects after applying the recommended changes to the original number of defects (so numbers less than 1.0 indicate improvements). A Scott-Knott procedure was used to test for statistically significant differences in the results.
+The Scott-Knott procedure recommended by Mittas \& Angelis in their 2013
+IEEE TSE paper~\cite{mittas13}. The samples for the Scott-Knott were obtained by repeating our experiments at least 20 times (the value of 20 was chosen as the minimum use sample size via the central limit theorem).
+	
+	In addition to this, we also explored the magnitude of changes that are being recommended. Specifically, we wanted to study if the changes too small or too large to be practically implemented. We measure these changes as a difference between the original attribute and the changed attributes, normalized to lie between $\pm1$. 
+	\subsection{Results}
+	The results of figure \ref{res} shows that in both of our
+ data sets, Contrast Trees' results are ranked exactly the same as the results seen
+ with HOW. That is, statistically, there are no differences between the two techniques. 
+ 
+ However, looking at what changes each of the techniques suggest, the differences are patent. As seen in figure \ref{deltas}, the plans obtained using Contrast Trees require that the changes be made to significantly fewer attributes while those with HOW require that some changes be made to all the attributes of the data. In addition to this, below are some of key advantages presented by Contrast Trees over other algorithms:
+	
+	\begin{itemize}
+		\item They allow the user to exert a fine grain control over the parameters that needs to be changed, while providing a way to visualize the recommended changes.
+		\item The changes suggested by the contrast sets are inherently local in nature, making the changes practical and potentially easy to implement.
+		\item The contrast tress require a worst case time complexity of $O(n)$, which is a function in linear time.
+	\end{itemize}
+
+Therefore, preliminary experimentation suggest that Contrast  Trees  are  an excellent tool to efficiently identify the key features that require changes, and also  to  obtain  a  quantitative  measure  as  to  how much change needs to be made.
+
+	\subsection{Discussion}
+
+ 
 	\section{Future Work}
 	Now, we strongly recommend HOW over contrast tree (and W2) since, as shown by the following results, HOW’s plans never lead to performance getting worse. Also, when HOW did improve the expected values of the performance, those performance improvements were an order of magnitude larger than those seen with contrast tree. 
 \bibliographystyle{plain}
