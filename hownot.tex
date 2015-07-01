@@ -141,7 +141,7 @@
 	was spent in those meetings discussion {\em what to do next}; i.e. trying
 	to determine what could be altered to better improve some business outcome.
 	
-	That   Microsoft  stufy found two common ``peeking'' methods.
+	That   Microsoft  study found two common ``peeking'' methods.
 	In {\em data engagement meetings},
 	users debated the implications of data
 	displayed on a screen. In this way, users
@@ -172,23 +172,17 @@
 	to the best of our knowledge, this combination of (abc) has not been thoroughly explored before.
 	Hence, this paper explores ``peeking''.
 	
-	\subsection{Digression: Evaluating Changes to a Software Project}
+	\section{ Evaluating Changes to a Software Project}
 	
 Before beginning, we offer three comments on evaluating changes to a project.
-Firstly, this paper uses  a prediction system (built by data mining) as the verification
-tool for our proposed changes. That is, given a hold out set that is used to learn a predictor,  This means
-that the following conclusions are only as certain as the efficacy of the predictor. It could be argued that a better way to assess changes to an organization
-would be to implement them in a software project. Indeed, it is true that some organizations have the resources to 
-run repeated trials to assess  different treatments.
-For example, in one  recent study, Bente et al. report results
-were the same  specification   was developed  by four different organizations~\cite{Anda2009}. 
-We note that
-very few industrial or research groups have access
-to the kinds of resources needed for this kind study. Also, given the
-diversity of modern software projects, it might be unreasonable to demand that all
-proposed changes for all projects are always evaluated by something like the Bente et al. study.
+Firstly, a planning system needs to be {\em effective}; i.e. if its recommendations
+are applied then some statistically significant change should be observed.
+To predict the number of defects in a data set before and after applying our changes,
+we build a    prediction system (built by data mining; specifically: CART). Note that this
+predictor was built from some hold-out data (i.e. from  different data than that used
+to build the predictor).
 
-Secondly, an important evaluation criteria for any conclusion made to a business user is that the users can {\em understand} the proposed change. In practice, this means at least
+Secondly, an important evaluation criteria for any conclusion made to a business user is that the users can understand the proposed change. In practice, this means at least
 generating {\em succinct} changes. As seen below, not all cluster+contrast methods generate succinct changes.
 
 Thirdly, as a final evaluation criteria, we will demand that the generated recommendations are {\em stable}; i.e. do not widely vary due to minor changes in the data. Hence, in the following, we will add a little randomness to our analysis then report results across 20{\bf XXX} repeated runs. In a result that supports our kind of analysis, we will show that the actions proposed by this analysis are very stable.
@@ -286,11 +280,46 @@ for explaining reasoning within multi-objective optimization~\cite{nva14}. This 
 application of contrast trees to defect prediction.
 
 	Contrast trees start by clustering data to find clusters $C_1,C_2,...$.
-	Next, using those clusters as class labels, we execute a decision tree algorithm to find what attributes select for different clusters. After that, to learn recommendations for a business user, we determine (1) what {\em current} cluster are you in?; (2) what {\em desired} cluster do you want to move to?; (3) what is the delta between those clusters? To answer the last question, we report the delta in the branches of the decision tree that lead to {\em current} and {\em desired}.  For full details, see \fig{contast-trees}.
+	Next, using those clusters as class labels, we execute a decision tree algorithm to find what attributes select for different clusters. After that, to learn recommendations for a business user, we determine (1) what {\em current} cluster are you in?; (2) what {\em desired} cluster do you want to move to?; (3) what is the delta between those clusters? To answer the last question, we report the delta in the branches of the decision tree that lead to {\em current} and {\em desired}.  For full details, see \fig{contast_trees}.
 	
 	%Contrast trees are decision trees that can be used to learn decision rules from a large data set. The use of decision trees for this purpose makes it easy to visualize the data and also makes interpretation of the recommended policies fairly straight forward. In addition to this, contrast tree generate ranges of decisions that allow for better feasibility.
  
  
+	
+
+As with any tree structure, the size and depth of the contrast tree has a profound impact on it performance. Our initial motivation was that the trees could serve as a medium for experts to identify and explore solution spaces that were local to the problem. The size of the decision tree, if too large, jeopardizes the readability of the solutions by increasing the complexity. We have therefore made efforts to reduce the size of the tree using  a pruning method that prunes away irrelevant branches that do not contribute better solutions (see step2 of \fig{contast_trees}). The smaller trees are much easier to understand.
+
+
+
+	\subsection{Instance-based Contrasts}
+	Contrast tree represents the next generation of our efforts to use contrast set learners for planning and case based reasoning. All the other methods were {\em instance-based methods}. 
+	Instance-based methods,   reason directly
+	from the loaded training data without first summarizing that data into a model.
+	The opposite to an instance-based method is one that builds
+	a model from the data, then reasons across that model (e.g. as done by
+	contrast trees, above). 
+	
+	Our previous experiment with instance-based planning
+	results in  W2. This was an instance-based planner that reflected over the delta of raw attributes \cite{6600685} (without any initial clustering). However, it frequently suffered from an optimization failure. When its plans were applied, performance improved in only $\tfrac{1}{3}$rd of test cases. 
+
+	We conjectured that W2 was failing since it could not generalize over sufficient
+	data. Hence, our next experiment was IDEA~\cite{me12c} which first clustered the data with WHERE (see step1 of  \fig{contast_trees}). IDEA made the mistake of summarizing the learned clusters via their median centroid (we now know that to be a mistake since, on experimentation, we found
+	IDEA's optimization failures to be as frequent as those of W2).
+ 
+The instance-based learner used in this paper is called HOW.
+During training, HOW  (a) clusters the training data with WHERE; (b) assigns a unique id to each cluster; then  (c) find the median centroid of each cluster.
+Next,  working in a random order, HOW labels each cluster with id of the  nearest cluster (that has yet to be labelled). This results are {\em partners}  of nearby clusters.
+After that, HOW draws a {\em slope} between the centroids of each partner
+then add a direction to that {\em slope}
+such that ``up hill'' now points to the centroid of the cluster with a score that is
+comparatively better than its partner.
+
+When using HOW on test data, each test instance finds its nearest slope then follows
+the slope ``up hill'' to find the best centroid in its local region.
+The delta between that test instance and the best centroid is then HOW's
+recommendation on how to improve that test instance.
+
+	
 
 	\begin{figure}[t]
 		{\footnotesize  \begin{tabular}{{llrrc}}
@@ -303,68 +332,83 @@ application of contrast trees to defect prediction.
 				\hline \end{tabular}}
 		
 		\caption{Results comparing the performance scores on sample projects from the Jurezcko data sets.}
-		\label{res}
+		\label{fig:res}
 
 	\end{figure}
 	
 	
 	\begin{figure*}[!t] 
 		\begin{minipage}{0.5\linewidth}
-			\subfloat[Tree Learner]{
+			\subfloat[Contrast tree learning]{
 				\includegraphics[width=\linewidth]{ant1.png}
 				\includegraphics[width=\linewidth]{jedit1.png}}\\
-			\subfloat[HOW]{			
+			\subfloat[Instance-based contrast sets]{			
 				\includegraphics[width=\linewidth]{ant2.png}
 				\includegraphics[width=\linewidth]{jedit2.png}}
 		\end{minipage}
-		\caption{Performance Comparision}
-		\label{deltas}
+		\caption{Performance Comparison.
+		X-axis lists various CK metrics such as loc (lines of code),
+		ce (how many other classes are used by a specific class),
+		cbo (class coupling, measured by number of methods accessing
+		the services of another class). Top row shows results from contrast
+		trees; bottom from instance-based methods. The attributes (on the x-axis)
+		are sorted according the distribution of the changes recommended by 
+		our two instance-based planners (most negative on left; most positive on right). The vertical bars in these charts indicated 25th, 50th, 75th precentil of the size of changes proposed by the different methods.}
+		\label{fig:deltas}
 	\end{figure*}
 	
-
-As with any tree structure, the size and depth of the contrast tree has a profound impact on it performance. Our initial motivation was that the trees could serve as a medium for experts to identify and explore solution spaces that were local to the problem. The size of the decision tree, if too large, jeopardizes the readability of the solutions by increasing the complexity. We have therefore made efforts to reduce the size of the tree using  a pruning method that prunes away irrelevant branches that do not contribute better solutions (see step2 of \fig{contast-trees}). The smaller trees are much easier to understand.
-
-
-
-	\subsection{Instance-based Contrasts}
-	Contrast tree represents the next generation of our efforts to use contrast set learners for planning and case based reasoning. All the other methods were {\em instance-based reasoners}
-	\bi
-	\teim  W2 was an instance-based planner that reflected over the delta of raw attributes \cite{6600685}. However, it frequently suffered from an optimization failure. When its plans were applied, performance improved in only $\tfrac{1}{3}$rd of test cases. 
-	
-	Generation two of our work resulted in the development of contrast trees. As briefly discussed above, it uses a recursive clustering algorithm followed by summarizing these recursive divisions into a tree structure. The initial results with contrast tree was very encouraging. As a continuation of our contrast tree work, we built HOW~\cite{HOW} as a simpler approach that was to provide a baseline result, above which contrast tree was meant to do better. 
-	
-	HOW is very different to other CBR systems in that it explores the {\em gradient between pairs of nearest clusters}. In other words, the classic CBR methods, including Contrast Trees, explore {\em points} while
-HOW explores the slope {\em between} points. Experimentation with HOW provided results that were in fact comparable to Contrast Trees. 
 	
 	\section{Experiments}
 	\subsection{Data}
-	For our initial experimentation, we studied two sample projects from the Jureczko object-oriented static code data sets~\cite{jureczko10}: Ant, Camel, Ivy, Jedit,   Log4, Lucene, Poi, Synapse, Velocity, Xalan, Xerces \footnote{Available from the object-oriented defects section of the PROMISE respository openscience.us/repo/defect/ck.}. The data is a collection of 20 OO measures and a the Boolean dependent attribute (whether a defect is reported to a post-release bug-tracking system). For our study, we picked two projects, Ant and Jedit, that best exemplified the performance of Contrast Tree. 
-	\subsection{Assessment}
-	In this study we wish to demonstrate Contrast Trees' ability to suggest meaningful changes in order to reduce defects while obtaining baseline results using a simpler algorithm. All our results have been presented as ratios of the number of defects after applying the recommended changes to the original number of defects (so numbers less than 1.0 indicate improvements). A Scott-Knott procedure was used to test for statistically significant differences in the results.
-The Scott-Knott procedure recommended by Mittas \& Angelis in their 2013
-IEEE TSE paper~\cite{mittas13}. The samples for the Scott-Knott were obtained by repeating our experiments at least 20 times (the value of 20 was chosen as the minimum use sample size via the central limit theorem).
+	For our initial experimentation, we studied two sample projects from the Jureczko object-oriented static code data sets~\cite{jureczko10}: Ant and  Jedit\footnote{Available from the object-oriented defects section of the PROMISE repository openscience.us/repo/defect/ck.}. The data is a collection of 20 OO measures and a the Boolean dependent attribute (whether a defect is reported to a post-release bug-tracking system). 
 	
-	In addition to this, we also explored the magnitude of changes that are being recommended. Specifically, we wanted to study if the changes too small or too large to be practically implemented. We measure these changes as a difference between the original attribute and the changed attributes, normalized to lie between $\pm1$. 
-	\subsection{Results}
-	The results of figure \ref{res} shows that in both of our
- data sets, Contrast Trees' results are ranked exactly the same as the results seen
- with HOW. That is, statistically, there are no differences between the two techniques. 
+	\subsection{Analysis Methods}
+	Recall from earlier in this paper, we proposed assessing instance-based planner
+	via their {\em effectiveness}, {\em stability}, and  {\em succinctness}.
+\bi
+\item
+	To assess {\em effectiveness}, all our results are  presented as ratios of the number of defects seen $\frac{\mathit{after}}{\mathit{before}}$ applying the recommended  (so numbers less than 1.0 indicate improvements). 
+	\item
+	To test for {\em stability}, we introduce some small randomness into our recommender systems, then re-run our experiments twenty times (the value of 20 was chosen as the minimum use sample size via the central limit theorem). Our randomness comes from WHERE's initial stochastic selection of instances (recall step1, discussed above) and from the random partner discovery procedure of HOW.
+	\item
+	To test for {\em succinctness}, we count the frequency and size of attribute changes recommended by contrast trees or HOW.
+	\ei
+To test if the distributions generated by the above are truly different, we
+used the the Scott-Knott procedure recommended by Mittas \& Angelis in their 2013
+IEEE TSE paper~\cite{mittas13}. The samples for the Scott-Knott are  obtained by repeating our experiments at least 20 times. With Scott-Knott, when testing for significant differences between samples, we used an see Efron \&
+Tibshirani bootstrap procedure~\cite[p220-223]{efron93} augmented with an A12 effect size test (and distributions were only ranked  different if that difference was recognized by
+both bootstrapping and the effect size test).
+
+\subsection{Results}
+	
+\subsubsection{EFfectiveness}
+The results of figure \ref{res} shows that for our test data, Contrast Trees and HOW are equally effective. Hence, to compare these methods, we have to look
+beyond effectiveness towards stability and succinctness.
+
+\subsubsection{Succinctness}
+
+\fig{deltas} shows the distribution of changes prosed by contrast trees
+and instance-based learning.  Note that contrast trees fare better in terms
+of succinctness since the contrast trees propose changes to {\em far fewer attributes}
+than instance-based methods.
+
+\subsubsection{Stability}
+\fig{deltas} also shows that the above succinctness result is stable across
+our 20 repeated runs. Further, comparing the sum of  the size of all the changes proposed in the top and bottom row of \fig{deltas}, we can see that the recommendations of contrast trees are far less varied than those of instance-based contrast methods.
  
- However, looking at what changes each of the techniques suggest, the differences are patent. As seen in figure \ref{deltas}, the plans obtained using Contrast Trees require that the changes be made to significantly fewer attributes while those with HOW require that some changes be made to all the attributes of the data. In addition to this, below are some of key advantages presented by Contrast Trees over other algorithms:
+ \section{Summary and Future Work}
+For the purposes of finding changes  we recommend
+contrast trees over instance-based methods:
 	
 	\begin{itemize}
-		\item They allow the user to exert a fine grain control over the parameters that needs to be changed, while providing a way to visualize the recommended changes.
-		\item The changes suggested by the contrast sets are inherently local in nature, making the changes practical and potentially easy to implement.
-		\item The contrast tress require a worst case time complexity of $O(n)$, which is a function in linear time.
+		\item Contrast trees allow the user to exert a fine grain control over the parameters that needs to be changed, while providing a way to visualize the recommended changes.
+		\item The changes suggested by the contrast sets are inherently local in nature (specialized to each test instance), making the changes practical and potentially easy to implement.
+	 
 	\end{itemize}
 
-Therefore, preliminary experimentation suggest that Contrast  Trees  are  an excellent tool to efficiently identify the key features that require changes, and also  to  obtain  a  quantitative  measure  as  to  how much change needs to be made.
 
-	\subsection{Discussion}
 
  
-	\section{Future Work}
-	Now, we strongly recommend HOW over contrast tree (and W2) since, as shown by the following results, HOW’s plans never lead to performance getting worse. Also, when HOW did improve the expected values of the performance, those performance improvements were an order of magnitude larger than those seen with contrast tree. 
 \bibliographystyle{plain}
 \bibliography{hownot}
 \end{document}
