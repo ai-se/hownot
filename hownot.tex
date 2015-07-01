@@ -166,14 +166,33 @@
 	For both those reasons,
 	we reflected over those tools to discover and analyze their
 	underlying process. The result was HOW: a tool
-	that combines two
-	data reduction methods:\bi
-	\item Method1: feature selection
-	\item Method2: centroid generation from   clusters.
-	\ei
-	While Method1 is widely used~\cite{Menzies2010},
-	to the best of our knowledge, this combination has not been thoroughly explored before.
+	that combines (a)~feature selection; (b)~centroid generation from   clusters;
+	(c)~contrast methods between centroids.
+	While method (a) is widely used (e.g.~\cite{Menzies2010}),
+	to the best of our knowledge, this combination of (abc) has not been thoroughly explored before.
 	Hence, this paper explores ``peeking''.
+	
+	\subsection{Digression: Evaluating Changes to a Software Project}
+	
+Before beginning, we offer three comments on evaluating changes to a project.
+Firstly, this paper uses  a prediction system (built by data mining) as the verification
+tool for our proposed changes. That is, given a hold out set that is used to learn a predictor,  This means
+that the following conclusions are only as certain as the efficacy of the predictor. It could be argued that a better way to assess changes to an organization
+would be to implement them in a software project. Indeed, it is true that some organizations have the resources to 
+run repeated trials to assess  different treatments.
+For example, in one  recent study, Bente et al. report results
+were the same  specification   was developed  by four different organizations~\cite{Anda2009}. 
+We note that
+very few industrial or research groups have access
+to the kinds of resources needed for this kind study. Also, given the
+diversity of modern software projects, it might be unreasonable to demand that all
+proposed changes for all projects are always evaluated by something like the Bente et al. study.
+
+Secondly, an important evaluation criteria for any conclusion made to a business user is that the users can {\em understand} the proposed change. In practice, this means at least
+generating {\em succinct} changes. As seen below, not all cluster+contrast methods generate succinct changes.
+
+Thirdly, as a final evaluation criteria, we will demand that the generated recommendations are {\em stable}; i.e. do not widely vary due to minor changes in the data. Hence, in the following, we will add a little randomness to our analysis then report results across 20{\bf XXX} repeated runs. In a result that supports our kind of analysis, we will show that the actions proposed by this analysis are very stable.
+
 	
 	\section{How to Cluster}
 	Recent results suggest  we are free to select from a wide range of 
@@ -197,7 +216,7 @@
 		\small
 		~\hrule~
 		
-		{\bf Top down clustering using WHERE:}
+		{\bf Step1: Top down clustering using WHERE}
 		
 		The data is recursively divided in clusters using WHERE as follows:
 		\begin{itemize}
@@ -217,43 +236,61 @@
 		\end{itemize}
 		~\hrule~
 		
-		{\bf Constructing Decision Trees:}
-		
-		A decision tree is built using CART with entropy being used to generate splits in the data. The leaf nodes of the tree are weighted by measuring the mean of majority cluster of the leaf. To limit the size of the tree Features are pruned using information gain.
+		{\bf Step2: Constructing Decision Trees}
+		Call each leaf from WHERE a  ``class''. Use an entropy-based
+		 decision tree (DT) learner to learn what attributes select for each ``class''. To limit tree size:
+		 \bi
+		 \item Only use the top $\alpha=33$\%  of the features, as determined by their information gain~\cite{Irani1993}. 
+		 \item Only build the trees down to  max depth of $\beta=10$.
+		 \item Only build subtrees if it contains at least $N^{\gamma=0.5}$ examples (where $N$ is the size of the training set).
+\ei
+{\em Score}  DT  leaf nodes  via the mean score of its majority cluster. 
 		
 		~\hrule~
 		
-		{\bf Generating contrast sets:}
+		{\bf Step3: Generating contrast sets}
 		\begin{itemize}
-		\item Identify current position on the tree.
-		\item Identify the nearest ``Better'' branch.
-		\item Identify the ``Delta'' between the cluster.		
-		\end{itemize}
+		\item Find the {\em current } cluster: take each test instance, run it down to a leaf in the DT tree.  
+		\item Find the {\em desired} cluster: 
+		\bi
+		\item Starting at {\em current}, ascend the tree $lvl\in \{0,1,2...\}$ levels;
+		\item Identify {\em sibling} clusters; i.e. leaf clusters that can be reached from level $lvl$ that are not {\em current }
+		\item Using the {\em score} defined above, find the {\em better} siblings; i.e. those with a {\em score} less than $\epsilon=0.5$ times the mean score of {\em current}. If none found, then repeat for $lvl += 1$
+		\item  Return the {\em closest} better sibling where distance is measured between the mean centroids of that sibling and {\em current}
+		\ei
+		\item Find the {\em delta}; i.e. the set difference between  conditions in the DT branch to {\em desired} and {\em current}. To find that delta:
+		\bi
+		\item
+		For discrete attributes,  return the value from {\em desired}. 
+		\item
+		For  numerics, return the numeric difference. 
+		\item
+		For numerics  into ranges, return a random number selected from the low and high boundaries of the that range.
+	\ei
+	\ei
 		~\hrule~
-		\caption{A summary of Contrast Trees}
+		\caption{Contrast tree generation: controlled by the parameters
+		$\{\alpha, \beta, \gamma, \delta, \epsilon\}$ (set via engineering judgement).}
 		\label{fig:contast_trees}
 	\end{figure}
 	
 	\section{How to Contrast}
 	Once we have  clusters, the next task is to offer business users lessons learned from comparing different clusters.
+		Once methods for doing so are the {\em contrast trees} and the {\em instance-based}
+		methods discussed below.
 	
-	Once methods for doing so is a {\em contrast tree}.
-	First, we cluster the data to find clusters $C_1,C_2,...$.
-	Next, using those clusters as class labels, we execute a decision tree algorithm to find what attributes select for different clusters. Next, to learn recommendations for a business user, we ask (1) what {\em current} cluster are you in?; (2) what {\em desired} cluster do you want to move to?; (3) what is the delta between those clusters? To answer the last question, we report the delta in the branches of the decision tree that lead to {\em current} and {\em desired}. 
+		\subsection{ Contrast Trees}
+
+Contrast trees were first developed by Lekkalapudi and Menzies as a method
+for explaining reasoning within multi-objective optimization~\cite{nva14}. This paper is the first
+application of contrast trees to defect prediction.
+
+	Contrast trees start by clustering data to find clusters $C_1,C_2,...$.
+	Next, using those clusters as class labels, we execute a decision tree algorithm to find what attributes select for different clusters. After that, to learn recommendations for a business user, we determine (1) what {\em current} cluster are you in?; (2) what {\em desired} cluster do you want to move to?; (3) what is the delta between those clusters? To answer the last question, we report the delta in the branches of the decision tree that lead to {\em current} and {\em desired}.  For full details, see \fig{contast-trees}.
 	
 	%Contrast trees are decision trees that can be used to learn decision rules from a large data set. The use of decision trees for this purpose makes it easy to visualize the data and also makes interpretation of the recommended policies fairly straight forward. In addition to this, contrast tree generate ranges of decisions that allow for better feasibility.
-	\subsection{Building Contrast Trees}
-	Contrast trees works by building a simple decision tree based on entropy, as in the classification and regression trees. Contrast tree uses the WHERE clustering algorithm, which in-turn uses FASTMAP \cite{fastmap} to compute clusters 
-	that contain instances that are spatially close. Each cluster is assigned a unique cluster id. Then, a simple decision tree is built using a standard classification and regression tree (CART). The tree is built with the following tunable features:
-	\begin{itemize}
-		\item \textit{Entropy} is used as criteria for generating optimum cuts while building the decision trees. These were shown to be consistent in giving high performance across most data.
-		\item \textit{Minimum samples per leaf} defines the minimum number of instances in a leaf of the decision tree.
-		\item \textit{Max depth} defines the number of levels of recursive splits that are allowed in the tree.
-	\end{itemize}
-	
-	Decision trees can be used to generate a decision rule, which when applied to solution sets must theoretically improve performance. To generate rules -- a tree is constructed with some training data, and for every instance in a the test data, we find a branch in the tree that best matches the test data. All instances that needs improvement in the test data constitute the ``worst'' set W. We find the nearest branch, ``B'', in the tree with better performance. The difference between W and B constitutes the decision rules.
-	
-	A contrast set, ``C'' is simply a collection of all the decision rules. It can be obtained traversing through the tree from ``W'' to ``B'' and tracking all the branch variables along this path. Note that the branch variables use decision ranges instead of single point solutions, making implementation of the rules in real life feasible. 
+ 
+ 
 
 	\begin{figure}[t]
 		{\footnotesize  \begin{tabular}{{llrrc}}
@@ -284,13 +321,15 @@
 		\label{deltas}
 	\end{figure*}
 	
-	\subsection{Features of Contrast Trees}
-As with any tree structure, the size and depth of the Contrast tree has a profound impact on it performance. Our initial motivation was that the trees could serve as a medium for experts to identify and explore solution spaces that were local to the problem. The size of the decision tree, if too large, jeopardizes the readability of the solutions by increasing the complexity. We have therefore made efforts to reduce the size of the tree, to do this we devised a pruning method, that prunes away irrelevant branches that do not contribute better solutions. The smaller trees are much easier to understand, however they do pose another problem: the test instances can be too dissimilar to the leaves in the tree and this means that the relevance of the contrast set can not be fully justified.
-	
-Likewise, the depth of the tree also influences the quality of contrast sets. The depth is represented by levels of splits in the tree, and this parameter determines the number of features that require changes. If the tree is too shallow, the changes suggested by the planner are too little to make any difference. On the other hand, deeper trees leads to over-fitting and therefore suggests too many changes when not required. Therefore, it is advised that these parameters be tuned
 
-	\subsection{Development of Contrast Trees}
-	Contrast tree represents the second generation of our efforts to use contrast set learners for planning and case based reasoning. W2 represents the first generation of our work. W2 is a CBR planner that reflected over the delta of raw attributes \cite{6600685}. However, it frequently suffered from an optimization failure. When its plans were applied, performance improved in only $\tfrac{1}{3}$rd of test cases. 
+As with any tree structure, the size and depth of the contrast tree has a profound impact on it performance. Our initial motivation was that the trees could serve as a medium for experts to identify and explore solution spaces that were local to the problem. The size of the decision tree, if too large, jeopardizes the readability of the solutions by increasing the complexity. We have therefore made efforts to reduce the size of the tree using  a pruning method that prunes away irrelevant branches that do not contribute better solutions (see step2 of \fig{contast-trees}). The smaller trees are much easier to understand.
+
+
+
+	\subsection{Instance-based Contrasts}
+	Contrast tree represents the next generation of our efforts to use contrast set learners for planning and case based reasoning. All the other methods were {\em instance-based reasoners}
+	\bi
+	\teim  W2 was an instance-based planner that reflected over the delta of raw attributes \cite{6600685}. However, it frequently suffered from an optimization failure. When its plans were applied, performance improved in only $\tfrac{1}{3}$rd of test cases. 
 	
 	Generation two of our work resulted in the development of contrast trees. As briefly discussed above, it uses a recursive clustering algorithm followed by summarizing these recursive divisions into a tree structure. The initial results with contrast tree was very encouraging. As a continuation of our contrast tree work, we built HOW~\cite{HOW} as a simpler approach that was to provide a baseline result, above which contrast tree was meant to do better. 
 	
