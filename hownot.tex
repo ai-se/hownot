@@ -34,7 +34,7 @@
 \DeclareMathOperator*{\argmin}{arg\,min} 
 \DeclareMathOperator*{\argmax}{arg\,max} 
 %\usepackage[usenames]{xcolor}
-
+\bibliographystyle{unsrt}
 
 
 
@@ -123,7 +123,7 @@
 	for data analytics? For example, if a business manager is presented
 	with a data mining result that troubles them (e.g. an estimate of
 	development time that is distressingly long), what advice
-	can we offer them on management actions to {\em change} hat estimate?
+	can we offer them on management actions to {\em change} that estimate?
 	
 	This is an important question, and one with much currency in industry.
 	In the summer of 2011 and 2012, one of us (Menzies) spent two months
@@ -131,13 +131,13 @@
 	observing data mining analysts.  He
 	noted how Microsoft's data scientists
 	discussed their data with  business users. 
-	One surprising from that study was just how
+	One surprising outcome of that study was just how
 	little time was spent  
 	inspecting  of the output of data miners as compared to another process, which we call {\em peeking}.
 	In {\em peeking}, analysts and users spend much time
-	inspecting and discuss small samples of either raw or exemplary or synthesized project data.  Further, very little of those discussions were  focused on classification
-	(the additional of a labels to some unlabelled data). Rather, much time
-	was spent in those meetings discussion {\em what to do next}; i.e. trying
+	inspecting and discussing small samples of either raw or exemplary or synthesized project data.  Further, very little of those discussions were  focused on classification
+	(the addition of a labels to some unlabelled data). Rather, much time
+	was spent in those meetings discussing {\em what to do next}; i.e. trying
 	to determine what could be altered to better improve some business outcome.
 	
 	That   Microsoft  study found two common ``peeking'' methods.
@@ -156,7 +156,7 @@
 	the same in both clusters, then these were pruned from
 	the reports to the user. In this way, very large
 	data sets can be shown on one PowerPoint
-	slide. Note that {\em cluster+contrast} was a tool that can be usefully employed within
+	slide. Note that {\em cluster+contrast} is a tool that can be usefully employed within
 	{\em data engagement meetings}.
 	
 	
@@ -164,7 +164,7 @@
 	meetings are common practices at Microsoft. Yet  these methods had never been rigorously studied or certified.
 	For both those reasons,
 	we reflected over those tools to discover and analyze their
-	underlying process. The result was HOW: a tool
+	underlying process. The result was HOW~\cite{howase}: a tool
 	that combines (a)~feature selection; (b)~centroid generation from   clusters;
 	(c)~contrast methods between centroids.
 	While method (a) is widely used (e.g.~\cite{Menzies2010}),
@@ -172,7 +172,7 @@
 
 This paper assesses two methods  for ``peeking'': a model-based method called CROSSTREES and an instance-based method   called HOW. 
 CROSSTREES were first developed by Lekkalapudi and Menzies to  explaining results from multi-objective optimizers~\cite{nva14}. This paper is the first
-to apply CROSSTREES to defect prediction. Also, that prior work evaluated
+to apply CROSSTREES to defect prediction and contrast set learning. Also, that prior work evaluated
 CROSSTREES against multi-objective optimizers and not   instance-based methods.
 
 This paper uses three criteria to assess the value of HOW and CROSSTREES for
@@ -182,14 +182,14 @@ learning actionable analytics:
 A planning system needs to be {\em effective}; i.e. if its recommendations
 are applied then some statistically significant change should be observed.
 To predict the number of defects in a data set before and after applying our changes,
-we build a    prediction system (built by data mining; specifically: CART). Note that this
+we build a    prediction system (built by data mining; specifically: Random Forest). Note that this
 predictor was built from some hold-out data (i.e. from  different data than that used
 to build the predictor).
 \item
 Any  conclusion made to a business user must be understandable;
-it is must generate {\em succinct} changes.  
+it must generate {\em succinct} changes.  
 \item
-Recommendations should be {\em stable}; i.e. do not widely vary due to minor changes in the data. Hence, in the following, we will add a little randomness to our analysis then report results across 20 repeated runs. 
+Recommendations should be {\em stable}; i.e. they shouldn't widely vary due to minor changes in the data. Hence, in our experiments, we will add a little randomness to our analysis then report results across 20 repeated runs. 
 \ei
 We will find that
  {\em effectiveness} of CROSSTREES and HOW are similar, but   CROSSTREES wins on {\em succinctness} and {\em stability}.
@@ -199,7 +199,7 @@ We will find that
 	clustering methods.  Ganesan~\cite{div14} explored 
 	different clustering methods for SE data using   effort and defect data from
 	the PROMISE repository~\cite{promiserepo}.
-	That studied explored
+	That study explored
 	K-Means, mini-batch-K-Means, DBscan, EM, Ward, and the WHERE algorithm discussed
 	below.
 	Clusters were assessed via the performance of prediction 
@@ -280,8 +280,8 @@ Both HOW and CROSSTREES use the WHERE clustering method shown as Step1 of \fig{c
 	
 		\subsection{ CROSSTREES}
 
-	CROSSTREES start by clustering data to find clusters $C_1,C_2,...$.
-	Next, using those clusters as class labels, we execute a decision tree algorithm to find what attributes select for different clusters. After that, to learn recommendations for a business user, we determine (1) what {\em current} cluster are you in?; (2) what {\em desired} cluster do you want to move to?; (3) what is the delta between those clusters? To answer the last question, we report the delta in the branches of the decision tree that lead to {\em current} and {\em desired}.  For full details, see \fig{contast_trees}.
+	CROSSTREES starts by clustering data to find clusters $C_1,C_2,...$.
+	Next, using those clusters as class labels, it executes a decision tree algorithm to find what attributes to select for different clusters. After that, to learn recommendations for a business user, we determine (1) what {\em current} cluster are you in?; (2) what {\em desired} cluster do you want to move to?; (3) what is the delta between those clusters? To answer the last question, we report the delta in the branches of the decision tree that lead to {\em current} and {\em desired}.  For full details, see \fig{contast_trees}.
 	
 	%CROSSTREES are decision trees that can be used to learn decision rules from a large data set. The use of decision trees for this purpose makes it easy to visualize the data and also makes interpretation of the recommended policies fairly straight forward. In addition to this, CROSSTREES generate ranges of decisions that allow for better feasibility.
  
@@ -294,7 +294,7 @@ As with any tree structure, the size and depth of the CROSSTREES has a profound 
 
 	\subsection{HOW: an Instance-based Approach}
 	CROSSTREES are the latest step in our attempts to combine data mining
-	with planning.   All our previous steps were {\em instance-based methods}. 
+	with planning.   All our previous steps were {\em instance-based methods}
 that   reason directly
 	from the loaded training data without first summarizing that data into a model.
 	The opposite to an instance-based method is one that builds
@@ -302,7 +302,7 @@ that   reason directly
 	CROSSTREES, above). 
 	
 	Our previous experiment with instance-based planning
-	results in  W2. This was an instance-based planner that reflected over the delta of raw attributes \cite{6600685} (without any initial clustering). However, it frequently suffered from an optimization failure. When its plans were applied, performance improved in only $\tfrac{1}{3}$rd of test cases. 
+	resulted in  W2~\cite{6600685}. This was an instance-based planner that reflected over the delta of raw attributes  (without any initial clustering). However, it frequently suffered from an {\em optimization failure}: when its plans were applied, performance improved in only $\tfrac{1}{3}$rd of test cases. 
 
 	We conjectured that W2 was failing since it could not generalize over sufficient
 	data. Hence, our next experiment was IDEA~\cite{me12c} which first clustered the data with WHERE (see step1 of  \fig{contast_trees}). IDEA made the mistake of summarizing the learned clusters via their median centroid (we now know that to be a mistake since, on experimentation, we found
@@ -312,7 +312,7 @@ The instance-based learner used in this paper is called HOW.
 During training, HOW  (a) clusters the training data with WHERE; (b) assigns a unique id to each cluster; then  (c) find the median centroid of each cluster.
 Next,  working in a random order, HOW labels each cluster with id of the  nearest cluster (that has yet to be labelled). This results are {\em partners}  of nearby clusters.
 After that, HOW draws a {\em slope} between the centroids of each partner
-then add a direction to that {\em slope}
+then adds a direction to that {\em slope}
 such that ``up hill'' now points to the centroid of the cluster with a score that is
 comparatively better than its partner.
 
@@ -321,7 +321,47 @@ the slope ``up hill'' to find the best centroid in its local region.
 The delta between that test instance and the best centroid is then HOW's
 recommendation on how to improve that test instance.
 
-	\begin{figure}[t!]
+	\section{Experiments}
+	\subsection{Data}
+	For our initial experimentation, we studied two sample projects from the Jureczko object-oriented static code data sets~\cite{jureczko10}: Ant and  Jedit~\cite{promiserepo}. The data is a collection of 20 OO measures and a the Boolean dependent attribute (whether a defect is reported to a post-release bug-tracking system). 
+	
+	\subsection{Analysis Methods}
+	Recall from earlier in this paper, we proposed assessing instance-based planner
+	via their {\em effectiveness}, {\em stability}, and  {\em succinctness}.
+
+	\paragraph{Effectiveness} All our results are  presented as ratios of the number of defects seen $\frac{\mathit{after}}{\mathit{before}}$ applying the recommended  (so numbers less than 1.0 indicate improvements). 
+	\paragraph{Stability} We introduce some small randomness into our recommender systems, then re-run our experiments twenty times (the value of 20 was chosen as the minimum use sample size via the central limit theorem). Our randomness comes from WHERE's initial stochastic selection of instances (recall step1, discussed above) and from the random partner discovery procedure of HOW.
+
+	
+	
+
+	\paragraph{Succinctness} We count the frequency and size of attribute changes recommended by CROSSTREES or HOW.
+
+To test if the distributions generated by the above are truly different, we
+used the the Scott-Knott procedure recommended by Mittas \& Angelis in their 2013
+IEEE TSE paper~\cite{mittas13}. The samples for the Scott-Knott are  obtained by repeating our experiments at least 20 times. With Scott-Knott, when testing for significant differences between samples, we used an Efron \&
+Tibshirani bootstrap procedure~\cite[p220-223]{efron93} augmented with an A12 effect size test (and distributions were only ranked  different if that difference was recognized by
+both bootstrapping and the effect size test).
+
+\subsection{Results}
+	
+\subsubsection{Effectiveness}
+The results of figure \ref{fig:res} shows that for our test data, CROSSTREES and HOW are equally effective (evidence: the median improvements are very similar; the Scott-Knott ranks shown in column one are identical). Hence, to compare these methods, we have to look
+beyond effectiveness towards stability and succinctness.
+
+\subsubsection{Succinctness}
+
+\fig{deltas} shows the distribution of changes prosed by CROSSTREES
+and instance-based learning.  Note that CROSSTREES fare better in terms
+of succinctness since the CROSSTREES propose changes to {\em far fewer attributes}
+than instance-based methods (specifically: just two of all our attributes).
+
+\subsubsection{Stability}
+\fig{deltas} also shows that the above succinctness result is stable across
+our 20 repeated runs. Further, comparing the sum of  the size of all the changes proposed in the top and bottom row of \fig{deltas}, we can see that the recommendations of CROSSTREES are far less varied than those of instance-based contrast methods.
+ 
+ 
+ \begin{figure}[t!]
 		{\footnotesize  \begin{tabular}{{llrrc}}
 				\arrayrulecolor[gray]{.90}
 				\rowcolor[gray]{.95} \textbf{Rank} & \textbf{Treatment} & \textbf{Median} & \textbf{IQR} & \\
@@ -338,14 +378,15 @@ recommendation on how to improve that test instance.
 	\end{figure}
 	
 
-	\begin{figure*}[b!] 
-		\begin{minipage}{0.5\linewidth}
+	\begin{figure*}[t!]  
+		~~~~~~~~\begin{minipage}{.5\linewidth}
 			\subfloat[CROSSTREES learning]{
-				\includegraphics[width=\linewidth]{ant1.png}\\
-				\includegraphics[width=\linewidth]{jedit1.png}}\\
+				\includegraphics[width=.85\linewidth]{ant1.png}\\
+				\includegraphics[width=.85\linewidth]{jedit1.png}}\\
 			\subfloat[Instance-based contrast sets]{			
-				\includegraphics[width=\linewidth]{ant2.png}
-				\includegraphics[width=\linewidth]{jedit2.png}}
+				\includegraphics[width=.85\linewidth]{ant2.png}
+				\includegraphics[width=.85\linewidth]{jedit2.png}}
+	 
 		\end{minipage}
 		\caption{Performance Comparison.
 		X-axis lists various CK metrics; e.g.  loc (lines of code),
@@ -359,62 +400,33 @@ recommendation on how to improve that test instance.
 
 	
 	
-	\section{Experiments}
-	\subsection{Data}
-	For our initial experimentation, we studied two sample projects from the Jureczko object-oriented static code data sets~\cite{jureczko10}: Ant and  Jedit~\cite{promiserepo}. The data is a collection of 20 OO measures and a the Boolean dependent attribute (whether a defect is reported to a post-release bug-tracking system). 
-	
-	\subsection{Analysis Methods}
-	Recall from earlier in this paper, we proposed assessing instance-based planner
-	via their {\em effectiveness}, {\em stability}, and  {\em succinctness}.
-\bi
-\item
-	To assess {\em effectiveness}, all our results are  presented as ratios of the number of defects seen $\frac{\mathit{after}}{\mathit{before}}$ applying the recommended  (so numbers less than 1.0 indicate improvements). 
-	\item
-	To test for {\em stability}, we introduce some small randomness into our recommender systems, then re-run our experiments twenty times (the value of 20 was chosen as the minimum use sample size via the central limit theorem). Our randomness comes from WHERE's initial stochastic selection of instances (recall step1, discussed above) and from the random partner discovery procedure of HOW.
-	\item
-	To test for {\em succinctness}, we count the frequency and size of attribute changes recommended by CROSSTREES or HOW.
-	\ei
-To test if the distributions generated by the above are truly different, we
-used the the Scott-Knott procedure recommended by Mittas \& Angelis in their 2013
-IEEE TSE paper~\cite{mittas13}. The samples for the Scott-Knott are  obtained by repeating our experiments at least 20 times. With Scott-Knott, when testing for significant differences between samples, we used an see Efron \&
-Tibshirani bootstrap procedure~\cite[p220-223]{efron93} augmented with an A12 effect size test (and distributions were only ranked  different if that difference was recognized by
-both bootstrapping and the effect size test).
 
-\subsection{Results}
-	
-\subsubsection{Effectiveness}
-The results of figure \ref{fig:res} shows that for our test data, CROSSTREES and HOW are equally effective. Hence, to compare these methods, we have to look
-beyond effectiveness towards stability and succinctness.
+ \section{Next Steps}
 
-\subsubsection{Succinctness}
+This work has primarily been an exploratory study to investigate the efficacy of CROSSTREES as opposed other instance based learning algorithms. Our results provides a natural guide to future research and has encouraged us to explore several avenues of future research. Some of them are discussed below.
 
-\fig{deltas} shows the distribution of changes prosed by CROSSTREES
-and instance-based learning.  Note that CROSSTREES fare better in terms
-of succinctness since the CROSSTREES propose changes to {\em far fewer attributes}
-than instance-based methods.
+\paragraph{More data}
+Tentatively, we can say that the patterns of \fig{deltas} hold for other data sets from other sources (specifically: model-based methods are as effective as instance-based methods but offer more succinct and stable conclusions). Those results are preliminary and need to better analyzed and documented.
 
-\subsubsection{Stability}
-\fig{deltas} also shows that the above succinctness result is stable across
-our 20 repeated runs. Further, comparing the sum of  the size of all the changes proposed in the top and bottom row of \fig{deltas}, we can see that the recommendations of CROSSTREES are far less varied than those of instance-based contrast methods.
- 
- 
+\paragraph{Feasibility} Another direction of research we are currently undertaking is a \textit{feasibility study}. With this we would like to understand the nature of changes suggested by CROSSTREES. Specifically: are CROSSTREE's proposed changes  small enough to be easily implemented on software projects?
+	Also, are CROSSTREE's proposed changes large enough to be feasible? Here we are asking if users can sufficient fine-grained control to make the small changes proposed in \fig{deltas}.
+	  
 
- \section{Summary and Future Work}
-For the purposes of finding changes  we recommend
-CROSSTREES over instance-based methods:
-	
-	\begin{itemize}
-		\item CROSSTREES allow the user to exert a fine grain control over the parameters that needs to be changed, while providing a way to visualize the recommended changes.
-		\item The changes suggested by the contrast sets are inherently local in nature (specialized to each test instance), making the changes practical and potentially easy to implement.
-	 
-	\end{itemize}
+\paragraph{Validation} This work has made use of Random Forest, learned on a hold-out training data, to measure the quality of plans obtained using CROSSTREES. It may be useful to assess the validity of these predictors. This can be achieved in one of many ways such as applying CROSSTREES to to more domains and to domains where exists some ``ground truth'' for the predictors.
 
-XXX need to work more on the 
-	$\{\alpha, \beta, \gamma, \delta, \epsilon\}$ parameters used in
-	\fig{contast_trees}. The current set was determined after some experimentation but clearly this is an area that requires more work.
-	
+\paragraph{Tuning} CROSSTREES are built with several parameters, which were determined after some experimentation. These parameters, $\{\alpha, \beta, \gamma, \delta, \epsilon\}$, used in \fig{contast_trees} are excellent candidates for automated tuning. 
 
- 
+\paragraph{Generality} We have compared two methods for this process and found that a model-based method (CROSSTREES) was effective as an instance-based method (HOW), but the former generated more succinct and stable recommendations. We conjecture that this conclusion holds more generally for other instance-based and model-based methods-- and that conjecture requires further testing.
+
+\section{Conclusion}
+Based on our meeting with Microsoft, we were motivated to explore tools that support {\em data engagement meetings}: in particular, the process called {\em peeking} which looks at \textit{cluster+contrast}. 
+
+In summary, CROSSTREES show promise and it will take much further research to establish this technique as a generic tool that can be employed to determine what, and by how much, attributes needs to be altered in order to better improve a business outcome. Thus, for the purposes of "peeking" we recommend CROSSTREES over instance-based methods. 
+
+\section*{Acknowledgments}
+
+The work has partially funded by a National Science Foundation CISE CCF award \#1506586.
+
 \bibliographystyle{plain}
 \bibliography{hownot}
 \end{document}
